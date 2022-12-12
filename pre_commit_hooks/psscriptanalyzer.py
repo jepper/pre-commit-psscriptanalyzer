@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import subprocess
+import platform
 from typing import Sequence
 
 
@@ -18,10 +19,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         'Install-Module -Name PSScriptAnalyzer'
         ' -Scope CurrentUser -AllowClobber -Force'
     )
+    operating_system = platform.uname().system
+    if(operating_system == 'Windows'):
+        pwsh_bin = 'pwsh.exe'
+    if(operating_system == 'Linux' or operating_system == 'Darwin'):
+        pwsh_bin = 'pwsh'
 
     m = subprocess.run(
         [
-            'pwsh.exe', '-Command',
+            pwsh_bin, '-Command',
             'if (!(' + pwsh_is_pssa_installed + ')) {' + pwsh_install_pssa + '}',
         ],
         stdout=subprocess.PIPE, text=True, )
@@ -34,7 +40,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     for filename in args.filenames:
         print(f'{filename}: checking...')
         p = subprocess.run(
-            ['pwsh.exe', '-Command', 'Invoke-ScriptAnalyzer', filename],
+            [pwsh_bin, '-Command', 'Invoke-ScriptAnalyzer', filename],
             stdout=subprocess.PIPE, text=True, )
 
         if (len(p.stdout) > 0):
