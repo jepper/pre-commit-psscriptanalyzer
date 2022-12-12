@@ -1,0 +1,7 @@
+-   id: psscriptanalyzer
+    name: Run PSScriptAnalyzer
+    description: Checks the quality of PowerShell code
+    entry: psscriptanalyzer
+    files: \.(ps1)$
+    language: python
+    stages: [commit, push, manual]
